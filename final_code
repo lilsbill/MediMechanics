@@ -53,6 +53,7 @@ int arrowPosition = 1;
 
 String weekDay[] = { "", "Monday", "", "Tuesday", "", "Wednesday", "", "Thursday", "", "Friday", "", "Saturday", "", "Sunday" };
 
+//bytes are used for the arrows that are used to select the days/times
 byte upArrow[8] = {
   B00000,
   B00100,
@@ -86,6 +87,8 @@ byte upArrow2[8] = {
   B10000
 };
 
+//moves the arrow position for the week function
+
 void updateArrowPosition() {
   lcd.clear();
   lcd.setCursor(1, 0);
@@ -94,6 +97,7 @@ void updateArrowPosition() {
   lcd.write(byte(0));
 }
 
+//function used to check that the array was accuratley storing the data when the day was picked
 void dayOutput(int day_Var) {
   switch (day_Var) {
     case 1: Serial.println("Monday"); break;
@@ -106,6 +110,7 @@ void dayOutput(int day_Var) {
   }
 }
 
+// this function is used to select AM/PM
 void setTime() {
   int timeDay = 1;
 
@@ -172,6 +177,8 @@ void setTime() {
   finalamPM = timeDay;
   setHour();
 }
+
+//function used to set the hour and the minutes
 
 void setHour() {
   int hours = 1;
@@ -299,7 +306,7 @@ void setHour() {
   }
 }
 
-
+// set day function
 void setDay(int input) {
   if (input == 1) {
     arrowPosition = min(arrowPosition + 2, 15);
@@ -318,6 +325,8 @@ void setDay(int input) {
   }
 }
 
+
+//setup function
 void setup() {
   pinMode(sensorPin, INPUT_PULLUP);
 
@@ -344,6 +353,7 @@ void setup() {
   lcd.write(byte(0));  // Display up arrow
 }
 
+// main loop, this is where everything begins and goes back too
 void loop() {
 
   int button1State = digitalRead(A0);
@@ -351,14 +361,19 @@ void loop() {
   int button3State = digitalRead(A2);
   int button4State = digitalRead(A3);
 
+  //this is how everything is run, by getting the digital reads of the functions
   if (button1State == LOW && lastButtonState1 == HIGH) {
+    // goes to setday with the input of the first button
     setDay(1);
   } else if (button2State == LOW && lastButtonState2 == HIGH) {
+    // goes to setday with the input of the second button
     setDay(2);
 
   } else if (button3State == LOW && lastButtonState3 == HIGH) {
     //setHour();
+    // goes to setday with the input of the third button
     setDay(3);
+    // check used to ensure it was accuratley breaking out of loop
     numInput++;
     //arrayData[numInput] = {finalday, finalhour, finalamPM, finalmin};
     lcd.clear();
@@ -368,11 +383,13 @@ void loop() {
     //lcd.print(arrayData[numInput].hour);
     //lcd.print(arrayData[numInput].min);
 
+    //confirmation for the user
     lcd.print("Date and Time");
     lcd.setCursor(0, 1);
     lcd.print("Saved");
 
 
+    // text used to display that the code has reset to the beginning
     delay(2000);
     lcd.clear();
     lcd.setCursor(1, 0);
@@ -380,6 +397,7 @@ void loop() {
     lcd.setCursor(arrowPosition, 1);
     lcd.write(byte(0));  // Display up arrow
   } else if (button4State == LOW && lastButtonState4 == HIGH) {
+    //this function is used as a test function for expo, it only runs the servo, beam break and buzzer
     for (int pos = 5; pos <= 60; pos += 1) {
       myServo.write(pos);
       delay(20);  // Adjust delay as needed for smoother or faster movement
